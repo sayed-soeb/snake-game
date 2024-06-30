@@ -10,6 +10,9 @@ foodImage.src = 'https://img.icons8.com/emoji/48/000000/red-apple.png'; // Apple
 
 document.addEventListener('keydown', changeDirection);
 
+// Add touch event listeners
+canvas.addEventListener('touchstart', handleTouchStart);
+
 function gameLoop() {
     if (isGameOver()) {
         alert('Game Over');
@@ -79,6 +82,35 @@ function changeDirection(event) {
     if (key === 38 && !goingDown) { direction = { x: 0, y: -gridSize }; }
     if (key === 39 && !goingLeft) { direction = { x: gridSize, y: 0 }; }
     if (key === 40 && !goingUp) { direction = { x: 0, y: gridSize }; }
+}
+
+function handleTouchStart(event) {
+    const touch = event.touches[0];
+    const startX = touch.clientX;
+    const startY = touch.clientY;
+
+    canvas.addEventListener('touchend', event => {
+        const touch = event.changedTouches[0];
+        const endX = touch.clientX;
+        const endY = touch.clientY;
+
+        const deltaX = endX - startX;
+        const deltaY = endY - startY;
+
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+            if (deltaX > 0 && !direction.x === -gridSize) {
+                direction = { x: gridSize, y: 0 };
+            } else if (deltaX < 0 && !direction.x === gridSize) {
+                direction = { x: -gridSize, y: 0 };
+            }
+        } else {
+            if (deltaY > 0 && !direction.y === -gridSize) {
+                direction = { x: 0, y: gridSize };
+            } else if (deltaY < 0 && !direction.y === gridSize) {
+                direction = { x: 0, y: -gridSize };
+            }
+        }
+    });
 }
 
 function drawFood() {
